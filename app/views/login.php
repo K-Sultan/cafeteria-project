@@ -1,7 +1,12 @@
 <?php 
 
 View::renderComponent("header");
-echo "Hello From Login";
+
+?>
+
+
+
+<?php
 
 View::renderComponent("footer");
 
