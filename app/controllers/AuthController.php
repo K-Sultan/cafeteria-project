@@ -40,7 +40,7 @@ class AuthController{
             if($id = Auth::login($email, $password)){
                 $_SESSION["userId"] = $id;
 
-               header("Location: ./home");
+               header("Location: ./");
                  exit;
 
             }else{
@@ -65,8 +65,40 @@ class AuthController{
 
    public function forgotpassword(){
 
-   echo "done";
-   exit;
+    $email = $_POST["email"] ?? "";
+    $errors = [];
+    if(empty($email)){
+      $errors[] = "Email  required.";
+    }
+
+    if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Invalid email format.";
+    }
+
+    if(!empty($errors)){
+        $_SESSION["errors"] = $errors;
+        header("Location: ./forgotpassword");
+        exit;
+    }
+
+    if(!Auth::emailExists($email)){
+        $errors[] = "Email does not exist.";
+        $_SESSION["errors"] = $errors;
+    }else{
+
+        $newPassword = "12345678";
+        if(Auth::updatePassword($email, $newPassword)){
+            $_SESSION["success"] = "A reset link has been sent to your email.";
+        }else{
+            $errors[] = "Please try again.";
+            $_SESSION["errors"] = $errors;
+            
+        }
+
+    }
+    
+    header("Location: ./forgotpassword");
+    exit;
    }
 
 

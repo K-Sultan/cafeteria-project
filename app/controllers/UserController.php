@@ -15,7 +15,7 @@ class UserController {
 //
        //  include  "./app/views/users.php";
 
-        View::render("users", compact("users"));
+        View::render("home", compact("users"));
     }
 
     public function home() {

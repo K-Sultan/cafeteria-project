@@ -20,7 +20,7 @@ View::renderComponent("header");
 <?php
 
 $errors =  $_SESSION["errors"]?? [];
-$success = $_SESSION["success"] ?? [];
+$success = $_SESSION["success"] ?? "";
 unset($_SESSION["errors"]);
 unset($_SESSION["success"]);
 
