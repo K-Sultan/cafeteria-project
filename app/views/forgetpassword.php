@@ -78,6 +78,8 @@ unset($_SESSION["success"]);
   </div>
 </div>
 
+<div class="h-25 fixed bottom-0 left-0 right-0">
 <?php 
 View::renderComponent("footer");
 ?>
+</div>

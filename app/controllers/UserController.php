@@ -98,4 +98,40 @@ class UserController {
     header("Location: /users/add");
     exit;
     }
+
+    public function home(){
+        if (!User::isLogin()) {
+            header("Location: /login");
+            exit;
+        }
+        require_once __DIR__ . "/../models/Product.php";
+        require_once __DIR__ . "/../models/Order.php";
+        
+        $products = Product::getAllAvailable();
+        
+        $users = [];
+        $latestOrderItems = [];
+        
+        if (User::isAdmin()) {
+            $users = User::getAllUsers();
+        } else {
+            $latestOrderItems = Order::getLatestOrderForUser($_SESSION['userId']); 
+        }
+
+
+
+        View::render("home", [
+            'products' => $products,
+            'users' => $users,
+            'latestOrderItems' => $latestOrderItems,
+            'isAdmin' => User::isAdmin()
+        ]);
+    }
+
+    public function logout() {
+        $_SESSION = [];
+        session_destroy();
+        header("Location: /login");
+        exit;
+    }
 }
