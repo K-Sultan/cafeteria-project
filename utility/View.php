@@ -7,7 +7,8 @@ class View{
          extract($data);
 
         include  "app/views/" . $view . ".php";
-
+        
+      
     }
 
     public static function renderComponent($component, $data = []) {
