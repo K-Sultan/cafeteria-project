@@ -5,20 +5,97 @@ require_once __DIR__ . "/../models/User.php";
 
 
 class UserController {
-
-    public   function index() {
-     //   echo "UserController index method arsany";
-
-         $userModel = new User();
-         $users = $userModel->getAllUsers();
-       //  print_r($users);
-//
-       //  include  "./app/views/users.php";
-
-        View::render("home", compact("users"));
+    
+    public function index() {
+        $userModel = new User();
+        $users = $userModel->getAllUsers();
+        View::render("users", compact("users"));
     }
 
-    public function home() {
-        echo "UserController home method";
+    public function add() {
+        View::render("users/add");
+    }
+
+    public function store() {
+    $errors = [];
+    
+    // 1. Validation
+    $name = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $confirmPassword = $_POST['confirm_password'] ?? '';
+    $room_no = trim($_POST['room_no'] ?? '');
+    $extension = trim($_POST['extension'] ?? '');
+
+    // Basic required checks
+    if (empty($name)) $errors[] = "Name is required.";
+    if (empty($email)) $errors[] = "Email is required.";
+    if (empty($password)) $errors[] = "Password is required.";
+
+    // Room No. & Extension Validations
+    if (empty($room_no)) {
+        $errors[] = "Room number is required.";
+    } elseif (!is_numeric($room_no)) {
+        $errors[] = "Room number must be a numeric value.";
+    }
+
+    if (empty($extension)) {
+        $errors[] = "Extension is required.";
+    }
+
+    // Password & Email unique checks
+    if ($password !== $confirmPassword) {
+        $errors[] = "Passwords do not match.";
+    }
+    
+    if (User::emailExists($email)) {
+        $errors[] = "This email is already registered.";
+    }
+
+    // 2. Handle Profile Picture Upload
+    $profilePicName = null;
+    if (empty($errors) && isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = __DIR__ . "/../../public/uploads/";
+        
+        if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
+        $fileExt = strtolower(pathinfo($_FILES['profile_pic']['name'], PATHINFO_EXTENSION));
+        $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+
+        if (!in_array($fileExt, $allowed)) {
+            $errors[] = "Invalid image format. Allowed: " . implode(', ', $allowed);
+        } else {
+            $profilePicName = time() . "_" . uniqid() . "." . $fileExt;
+            $targetPath = $uploadDir . $profilePicName;
+
+            if (!move_uploaded_file($_FILES['profile_pic']['tmp_name'], $targetPath)) {
+                $errors[] = "Failed to upload the profile picture.";
+            }
+        }
+    }
+
+    // 3. Save or Redirect
+    if (empty($errors)) {
+        $success = User::create([
+            'name'      => $name,
+            'email'     => $email,
+            'password'  => $password,
+            'room_no'   => $room_no,
+            'extension' => $extension,
+            'profile_pic' => $profilePicName
+        ]);
+
+        if ($success) {
+            header("Location: /users"); 
+            exit;
+        } else {
+            $errors[] = "Something went wrong while saving to the database.";
+        }
+    }
+
+    // If we reach here, there were errors
+    $_SESSION['errors'] = $errors;
+    header("Location: /users/add");
+    exit;
     }
 }

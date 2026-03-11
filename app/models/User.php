@@ -53,5 +53,27 @@ public static function isAdmin(){
     return false;
 }
 
+public static function create($data) {
+    $conn = Database::getConnection();
+    $sql = "INSERT INTO users (name, email, password_hash, room_no, extension, profile_pic) 
+            VALUES (?, ?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    
+    return $stmt->execute([
+        $data['name'],
+        $data['email'],
+        password_hash($data['password'], PASSWORD_DEFAULT),
+        $data['room_no'],
+        $data['extension'],
+        $data['profile_pic']
+    ]);
+}
+
+public static function emailExists($email) {
+    $conn = Database::getConnection();
+    $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
+    $stmt->execute([$email]);
+    return $stmt->fetch() ? true : false;
+}
 
 }
