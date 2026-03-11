@@ -82,9 +82,10 @@ unset($_SESSION["errors"]);
 </div>
 
 
-
+<div class="h-25 fixed bottom-0 left-0 right-0">
 <?php
 
 View::renderComponent("footer");
 
 ?>
+</div>

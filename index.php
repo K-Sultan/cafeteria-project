@@ -4,6 +4,7 @@ require_once  "utility/Router.php";
 require_once  "utility/View.php";
 require_once "app/controllers/UserController.php";
 require_once "app/controllers/AuthController.php";
+require_once "app/controllers/OrderController.php"; // Added this line
 
 $router = new Router();
 
@@ -18,5 +19,8 @@ $router->post("/forgotpassword", [AuthController::class, "forgotPassword"]);
 $router->get("/users/add", [UserController::class, "add"]);
 $router->post("/users", [UserController::class, "store"]);
 $router->get("/users", [UserController::class, "index"]);
+$router->get("/home", [UserController::class, "home"]);
+$router->get("/logout", [UserController::class, "logout"]);
+$router->post("/orders", [OrderController::class, "store"]); // Added this line
 
 $router->resolve();

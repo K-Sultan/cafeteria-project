@@ -7,10 +7,10 @@ class AuthController{
 
   
     public function index() {
-     
-        
+        // Clear any stale user session so the header on the login page
+        // doesn't show a previously logged-in user's name/profile picture.
+        unset($_SESSION['userId']);
         View::render("login");
-        
     }
 
     public function login() {
@@ -40,7 +40,7 @@ class AuthController{
             if($id = Auth::login($email, $password)){
                 $_SESSION["userId"] = $id;
 
-               header("Location: ./");
+               header("Location: ./home");
                  exit;
 
             }else{
