@@ -9,4 +9,11 @@ class Product {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public static function getAllCategories() {
+        $conn = Database::getConnection();
+        $stmt = $conn->prepare("SELECT * FROM categories");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

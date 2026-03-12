@@ -5,6 +5,8 @@ require_once  "utility/View.php";
 require_once "app/controllers/UserController.php";
 require_once "app/controllers/AuthController.php";
 require_once "app/controllers/OrderController.php"; // Added this line
+require_once __DIR__ . "/app/controllers/ProductController.php";
+
 
 $router = new Router();
 
@@ -22,5 +24,7 @@ $router->get("/users", [UserController::class, "index"]);
 $router->get("/home", [UserController::class, "home"]);
 $router->get("/logout", [UserController::class, "logout"]);
 $router->post("/orders", [OrderController::class, "store"]); // Added this line
+$router->get('/home', [ProductController::class, 'index']);
+
 
 $router->resolve();
