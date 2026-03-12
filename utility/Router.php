@@ -22,9 +22,23 @@ class Router
         $this->register($path, 'POST', $handler);
     }
 
+    public function delete($path, $handler)
+    {
+        $this->register($path, 'DELETE', $handler);
+    }
+
     public function resolve()
     {
         $method = $_SERVER['REQUEST_METHOD'];
+
+        // Support HTML form method spoofing: POST + _method=DELETE/PUT/PATCH
+        if ($method === 'POST' && isset($_POST['_method'])) {
+            $spoofedMethod = strtoupper(trim($_POST['_method']));
+            if (in_array($spoofedMethod, ['PUT', 'PATCH', 'DELETE'], true)) {
+                $method = $spoofedMethod;
+            }
+        }
+
         $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             // echo "Requested Path: $path <br>";
   

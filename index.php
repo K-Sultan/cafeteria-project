@@ -24,7 +24,11 @@ $router->get("/users", [UserController::class, "index"]);
 $router->get("/home", [UserController::class, "home"]);
 $router->get("/logout", [UserController::class, "logout"]);
 $router->post("/orders", [OrderController::class, "store"]); // Added this line
-$router->get('/home', [ProductController::class, 'index']);
+$router->get('/home', [ProductController::class, 'home']);
+$router->get('/products', [ProductController::class, 'index']);
+$router->get('/products/create', [ProductController::class, 'create']);
+$router->post('/products', [ProductController::class, 'store']);
+$router->delete('/products/delete', [ProductController::class, 'destroy']);
 
 
 $router->resolve();
