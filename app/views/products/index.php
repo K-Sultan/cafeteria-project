@@ -130,6 +130,16 @@
 
                                     <td class="whitespace-nowrap px-3 py-4 text-sm">
                                         <div class="flex items-center gap-2">
+                                            <form method="POST" action="/products/availability" class="inline">
+                                                <input type="hidden" name="id" value="<?= $product['id'] ?>">
+                                                <input type="hidden" name="is_available" value="<?= $product['is_available'] ? '0' : '1' ?>">
+                                                <button type="submit"
+                                                        class="inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer <?= $product['is_available']
+                                                            ? 'bg-amber-500/20 text-amber-300 ring-1 ring-amber-500/30 hover:bg-amber-500/30 hover:text-amber-200'
+                                                            : 'bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-500/30 hover:bg-emerald-500/30 hover:text-emerald-200' ?>">
+                                                    <?= $product['is_available'] ? 'Mark Unavailable' : 'Mark Available' ?>
+                                                </button>
+                                            </form>
                                             <a href="/products/edit?id=<?= $product['id'] ?>"
                                                class="inline-flex items-center rounded-lg bg-indigo-500/20 px-3 py-1.5 text-xs font-semibold text-indigo-300 ring-1 ring-indigo-500/30 hover:bg-indigo-500/30 hover:text-indigo-200 transition-colors">Edit</a>
                                             <form method="POST" action="/products/delete" class="inline"

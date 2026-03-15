@@ -2,7 +2,8 @@
 View::renderComponent("header");
 ?>
 
-<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+<div class="flex-1 bg-gray-900">
+<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 mt-20">
 
   <div class="sm:mx-auto sm:w-full sm:max-w-sm">
     <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
@@ -77,9 +78,6 @@ unset($_SESSION["success"]);
 
   </div>
 </div>
-
-<div class="h-25 fixed bottom-0 left-0 right-0">
-<?php 
-View::renderComponent("footer");
-?>
 </div>
+
+<?php View::renderComponent("footer"); ?>

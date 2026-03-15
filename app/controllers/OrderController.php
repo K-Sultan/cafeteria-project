@@ -8,7 +8,6 @@ class OrderController {
     public function store() {
         // Since we send JSON from the frontend
         $data = json_decode(file_get_contents('php://input'), true);
-        
         if (!$data) {
             echo json_encode(['success' => false, 'message' => 'Invalid data format']);
             return;
@@ -46,4 +45,63 @@ class OrderController {
             echo json_encode(['success' => false, 'message' => 'Failed to create order.']);
         }
     }
+    //k
+    public function index() {
+        if (!isset($_SESSION['userId'])) {
+            header("Location: /login");
+            exit;
+        }
+
+        $userId = $_SESSION['userId'];
+        $orders = Order::getOrdersByUserId($userId);
+
+        View::render("my-orders", ["orders" => $orders]);
+    }
+
+    public function show() {
+        if (!isset($_SESSION['userId'])) {
+            header("Location: /login");
+            exit;
+        }
+
+        $userId = $_SESSION['userId'];
+        $orderId = $_GET['id'] ?? null;
+
+        if (!$orderId) {
+            die("Order ID is required.");
+        }
+
+        $order = Order::getOrderById($orderId);
+
+        if (!$order || $order['user_id'] != $userId) {
+            die("Order not found or unauthorized.");
+        }
+
+        $items = Order::getOrderItems($orderId);
+
+        View::render("order-details", [
+            "order" => $order,
+            "items" => $items
+        ]);
+    }
+
+    public function cancel() {
+        if (!isset($_SESSION['userId'])) {
+            header("Location: /login");
+            exit;
+        }
+
+        $userId = $_SESSION['userId'];
+        $orderId = $_POST['order_id'] ?? null;
+
+        if (!$orderId) {
+            die("Order ID is required.");
+        }
+
+        Order::cancelOrder($orderId, $userId);
+
+        header("Location: /my-orders");
+        exit;
+    }
+    //k 
 }

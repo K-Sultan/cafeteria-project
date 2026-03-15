@@ -17,7 +17,7 @@ $profilePic = !empty($user['profile_pic']) ? '/public/uploads/' . $user['profile
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="app/views/src/styles/style.css">
 </head>
-<body class="h-full bg-gray-900">
+<body class="h-full bg-gray-900  flex flex-col">
 
 <nav class="relative bg-gray-800/50 border-b border-white/10">
   <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -45,10 +45,10 @@ $profilePic = !empty($user['profile_pic']) ? '/public/uploads/' . $user['profile
         <div class="hidden sm:ml-6 sm:block">
           <div class="flex space-x-4">
             <?php if ($role === 'user'): ?>
-              <a href="/home" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">Home</a>
+              <a href="/" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">Home</a>
               <a href="/my-orders" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">My Orders</a>
             <?php elseif ($role === 'admin'): ?>
-              <a href="/home" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">Home</a>
+              <a href="/" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">Home</a>
               <a href="/products" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">Products</a>
               <a href="/users" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">Users</a>
               <a href="/manual-order" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">Manual Order</a>

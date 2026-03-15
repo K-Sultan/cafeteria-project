@@ -54,6 +54,31 @@ class ProductController
         exit;
     }
 
+    public function updateAvailability()
+    {
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+        $isAvailable = filter_input(
+            INPUT_POST,
+            'is_available',
+            FILTER_VALIDATE_INT,
+            ['options' => ['min_range' => 0, 'max_range' => 1]]
+        );
+
+        if ($id === false || $id === null || $isAvailable === false || $isAvailable === null) {
+            header("Location: /products");
+            exit;
+        }
+
+        $product = Product::findById($id);
+
+        if ($product) {
+            Product::updateAvailability($id, (int) $isAvailable);
+        }
+
+        header("Location: /products");
+        exit;
+    }
+
     public function store()
     {
         $errors = [];

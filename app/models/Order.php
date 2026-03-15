@@ -62,4 +62,65 @@ class Order {
         
         return $stmtItems->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    //k
+    public static function getOrdersByUserId($userId) {
+        $conn = Database::getConnection();
+    
+        $stmt = $conn->prepare("
+            SELECT id, room_no, notes, status, total_amount, created_at
+            FROM orders
+            WHERE user_id = ?
+            ORDER BY created_at DESC
+        ");
+    
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function getOrderById($orderId) {
+        $conn = Database::getConnection();
+    
+        $stmt = $conn->prepare("
+            SELECT id, user_id, room_no, notes, status, total_amount, created_at
+            FROM orders
+            WHERE id = ?
+            LIMIT 1
+        ");
+    
+        $stmt->execute([$orderId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public static function getOrderItems($orderId) {
+        $conn = Database::getConnection();
+    
+        $stmt = $conn->prepare("
+            SELECT 
+                p.name,
+                p.image,
+                oi.quantity,
+                oi.unit_price,
+                (oi.quantity * oi.unit_price) AS subtotal
+            FROM order_items oi
+            JOIN products p ON p.id = oi.product_id
+            WHERE oi.order_id = ?
+        ");
+    
+        $stmt->execute([$orderId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function cancelOrder($orderId, $userId) {
+        $conn = Database::getConnection();
+    
+        $stmt = $conn->prepare("
+            UPDATE orders
+            SET status = 'cancelled'
+            WHERE id = ? AND user_id = ? AND status = 'processing'
+        ");
+    
+        return $stmt->execute([$orderId, $userId]);
+    }
+    //k
 }

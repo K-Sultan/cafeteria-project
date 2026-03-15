@@ -1,6 +1,56 @@
 <?php View::renderComponent("header"); ?>
 
-<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+<style>
+    /* Page-local layout so the footer stays at the bottom on this screen only */
+    body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .add-user-page-main {
+        flex: 1;
+    }
+</style>
+ 
+<?php
+$errors =  $_SESSION["errors"]?? [];
+unset($_SESSION["errors"]);
+
+
+  ?>
+
+
+<div class="add-user-page-main bg-gray-900">
+<div class="flex flex-col justify-center px-6 py-12 lg:px-8">
+<?php  if(!empty($errors)): ?>
+<div class="mb-6 rounded-lg border border-red-500/30 bg-red-900/40 p-4 text-red-200 w-1/2 mx-auto">
+
+    <div class="flex items-start gap-3">
+
+        <svg class="h-5 w-5 flex-shrink-0 text-red-400 mt-1" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-4a1 1 0 112 0 1 1 0 01-2 0zm0-8a1 1 0 112 0v5a1 1 0 11-2 0V6z"
+                clip-rule="evenodd" />
+        </svg>
+
+        <div>
+            <h3 class="font-semibold text-red-200">
+                There were <?= count($errors) ?> errors with your submission
+            </h3>
+
+            <ul class="mt-2 list-disc pl-5 space-y-1 text-red-300">
+                <?php foreach($errors as $error): ?>
+                    <li><?= $error ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+
+    </div>
+</div>
+<?php endif; ?>
+
+
     <div class="sm:mx-auto sm:w-full sm:max-w-2xl">
         <h2 class="text-3xl font-bold tracking-tight text-white mb-10">Add User</h2>
 
@@ -68,6 +118,7 @@
             </div>
         </form>
     </div>
+</div>
 </div>
 
 <script src="/app/views/src/scripts/UserValidation.js"></script>

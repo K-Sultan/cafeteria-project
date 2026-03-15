@@ -54,4 +54,10 @@ class Product {
         $stmt = $conn->prepare("DELETE FROM products WHERE id = ?");
         return $stmt->execute([$id]);
     }
+
+    public static function updateAvailability($id, $is_available) {
+        $conn = Database::getConnection();
+        $stmt = $conn->prepare("UPDATE products SET is_available = ? WHERE id = ?");
+        return $stmt->execute([$is_available, $id]);
+    }
 }

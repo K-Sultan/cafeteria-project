@@ -4,6 +4,7 @@ View::renderComponent("header");
 
 ?>
 
+<div class="flex-1 bg-gray-900 mt-10">
 <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
   <div class="sm:mx-auto sm:w-full sm:max-w-sm">
     <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company" class="mx-auto h-10 w-auto" />
@@ -52,7 +53,7 @@ unset($_SESSION["errors"]);
 
 
 
-    <form action="./login" method="POST" class="space-y-6">
+    <form action="./login" method="POST" class="space-y-6 ">
       <div>
         <label for="email" class="block text-sm/6 font-medium text-gray-100">Email address</label>
         <div class="mt-2">
@@ -80,12 +81,6 @@ unset($_SESSION["errors"]);
     
   </div>
 </div>
-
-
-<div class="h-25 fixed bottom-0 left-0 right-0">
-<?php
-
-View::renderComponent("footer");
-
-?>
 </div>
+
+<?php View::renderComponent("footer"); ?>
