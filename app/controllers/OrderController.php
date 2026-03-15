@@ -104,14 +104,67 @@ class OrderController {
         exit;
     }
 
+    public function updateStatus() {
+        header('Content-Type: application/json');
+
+        if (!User::isAdmin()) {
+            http_response_code(403); // 403 is for unauthorized access
+            echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+            return;
+        }
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data) { 
+            http_response_code(400); // 400 Bad Request for invalid JSON
+            echo json_encode(['success' => false, 'message' => 'Invalid data format']);
+            return;
+        }
+
+        $orderId = isset($data['order_id']) ? (int) $data['order_id'] : 0;
+        $newStatus = trim($data['status'] ?? '');
+        $allowedStatuses = ['processing', 'out_for_delivery', 'done', 'cancelled'];
+
+        if ($orderId <= 0 || !in_array($newStatus, $allowedStatuses, true)) {
+            http_response_code(422); // 422 Unprocessable Entity for invalid data
+            echo json_encode(['success' => false, 'message' => 'Invalid order id or status']);
+            return;
+        }
+
+        $updated = Order::updateOrderStatus($orderId, $newStatus);
+
+        if ($updated) {
+            echo json_encode(['success' => true]);
+            return;
+        }
+
+        http_response_code(500); // 500 Internal Server Error for failed updates
+        echo json_encode(['success' => false, 'message' => 'Failed to update order status']);
+    }
+
 
     public function home() {
         if (!User::isAdmin()) {
             header("Location: /login");
             exit;
         }
-          
-        View::render("Admin/home");
+
+        $filters = [
+            'date' => trim($_GET['date'] ?? ''),
+            'status' => trim($_GET['status'] ?? ''),
+            'room_no' => trim($_GET['room_no'] ?? ''),
+            'user_id' => trim($_GET['user_id'] ?? ''),
+        ];
+
+        $users = User::getAllUsers();
+        $rooms = Order::getRoomsNumbers();
+        $orders = Order::getOrdersWithItems($filters);
+
+        View::render("Admin/home", [
+            "users" => $users,
+            "rooms" => $rooms,
+            "orders" => $orders,
+            "filters" => $filters,
+        ]);
     }
 }
 

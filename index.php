@@ -29,6 +29,7 @@ $router->get("/",[(User::isAdmin())? OrderController::class : UserController::cl
 
 $router->get("/logout", [UserController::class, "logout"]);
 $router->post("/orders", [OrderController::class, "store"]); // Added this line
+$router->post("/orders/status", [OrderController::class, "updateStatus"]);
 // $router->get('/home', [ProductController::class, 'index']);
 $router->get("/my-orders", [OrderController::class, "index"]);
 $router->get("/orders/show", [OrderController::class, "show"]);

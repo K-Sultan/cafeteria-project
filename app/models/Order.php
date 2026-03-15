@@ -122,5 +122,110 @@ class Order {
     
         return $stmt->execute([$orderId, $userId]);
     }
-    //k
+
+    public static function getRoomsNumbers() {
+        $conn = Database::getConnection();
+    
+        $stmt = $conn->query("SELECT DISTINCT room_no FROM orders ORDER BY room_no ASC");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function getOrdersWithItems($filters = []) {
+        $conn = Database::getConnection();
+    
+        $query = "
+            SELECT 
+                o.id, o.user_id, o.room_no, o.notes, o.status, o.total_amount, o.created_at,
+                u.name AS user_name,
+                u.extension AS user_extension,
+                p.id AS product_id,
+                p.name AS product_name,
+                p.image AS product_image,
+                oi.quantity,
+                oi.unit_price,
+                (oi.quantity * oi.unit_price) AS subtotal
+            FROM orders o
+            JOIN users u ON o.user_id = u.id
+            JOIN order_items oi ON o.id = oi.order_id
+            JOIN products p ON oi.product_id = p.id
+        ";
+    
+        $conditions = [];
+        $params = [];
+    
+        if (!empty($filters['date'])) {
+            $conditions[] = "DATE(o.created_at) = ?";
+            $params[] = $filters['date'];
+        }
+    
+        if (!empty($filters['status'])) {
+            $conditions[] = "o.status = ?";
+            $params[] = $filters['status'];
+        }
+    
+        if (!empty($filters['room_no'])) {
+            $conditions[] = "o.room_no = ?";
+            $params[] = $filters['room_no'];
+        }
+    
+        if (!empty($filters['user_id'])) {
+            $conditions[] = "o.user_id = ?";
+            $params[] = $filters['user_id'];
+        }
+    
+        if ($conditions) {
+            $query .= " WHERE " . implode(" AND ", $conditions);
+        }
+    
+        $query .= " ORDER BY o.created_at DESC, oi.id ASC";
+    
+        $stmt = $conn->prepare($query);
+        $stmt->execute($params);
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $orders = [];
+
+        foreach ($rows as $row) {
+            $orderId = $row['id'];
+
+            if (!isset($orders[$orderId])) {
+                $orders[$orderId] = [
+                    'id' => $row['id'],
+                    'user_id' => $row['user_id'],
+                    'room_no' => $row['room_no'],
+                    'notes' => $row['notes'],
+                    'status' => $row['status'],
+                    'total_amount' => $row['total_amount'],
+                    'created_at' => $row['created_at'],
+                    'user_name' => $row['user_name'],
+                    'user_extension' => $row['user_extension'],
+                    'items' => [],
+                ];
+            }
+
+            $orders[$orderId]['items'][] = [
+                'id' => $row['product_id'],
+                'name' => $row['product_name'],
+                'image' => $row['product_image'],
+                'quantity' => $row['quantity'],
+                'unit_price' => $row['unit_price'],
+                'subtotal' => $row['subtotal'],
+            ];
+        }
+
+        return array_values($orders);
+    }
+
+
+    public static function updateOrderStatus($orderId, $newStatus) {
+        $conn = Database::getConnection();
+    
+        $stmt = $conn->prepare("
+            UPDATE orders
+            SET status = ?
+            WHERE id = ?
+        ");
+    
+        return $stmt->execute([$newStatus, $orderId]);
+    }
 }
