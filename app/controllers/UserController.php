@@ -90,7 +90,7 @@ class UserController {
         ]);
 
         if ($success) {
-            header("Location: /users"); 
+            header("Location: /users");
             exit;
         } else {
             $errors[] = "Something went wrong while saving to the database.";

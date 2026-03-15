@@ -23,9 +23,18 @@ $router->get("/users/add", [UserController::class, "add"]);
 $router->post("/users", [UserController::class, "store"]);
 $router->get("/users", [UserController::class, "index"]);
 $router->get("/", [UserController::class, "home"]);
+//$router->get('/home', [ProductController::class, 'index']);
+$router->get("/", [UserController::class, "home"]);
 $router->get("/logout", [UserController::class, "logout"]);
 $router->post("/orders", [OrderController::class, "store"]); // Added this line
-//$router->get('/home', [ProductController::class, 'index']);
 
+$router->get("/my-orders", [OrderController::class, "index"]);
+//will show logged in users order
+
+$router->get("/orders/show", [OrderController::class, "show"]);
+//details page
+
+$router->post("/orders/cancel", [OrderController::class, "cancel"]);
+//cancel order
 
 $router->resolve();
