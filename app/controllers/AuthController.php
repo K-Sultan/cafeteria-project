@@ -40,7 +40,7 @@ class AuthController{
             if($id = Auth::login($email, $password)){
                 $_SESSION["userId"] = $id;
 
-               header("Location: ./home");
+               header("Location: ./");
                  exit;
 
             }else{
