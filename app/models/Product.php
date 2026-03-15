@@ -17,6 +17,23 @@ class Product {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public static function categoryExists($name) {
+        $conn = Database::getConnection();
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM categories WHERE LOWER(TRIM(name)) = LOWER(TRIM(?))");
+        $stmt->execute([$name]);
+        return $stmt->fetchColumn() > 0;
+    }
+
+    public static function addCategory($name) {
+        $conn = Database::getConnection();
+        $stmt = $conn->prepare("INSERT INTO categories (name) VALUES (?)");
+        if ($stmt->execute([$name])) {
+            return $conn->lastInsertId();
+        }
+        return false;
+    }
+
+
     public static function getAll() {
         $conn = Database::getConnection();
         $stmt = $conn->prepare(
