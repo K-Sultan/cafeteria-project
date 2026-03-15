@@ -103,5 +103,17 @@ class OrderController {
         header("Location: /my-orders");
         exit;
     }
-    //k 
+
+
+    public function home() {
+        if (!User::isAdmin()) {
+            header("Location: /login");
+            exit;
+        }
+          
+        View::render("Admin/home");
+    }
 }
+
+
+

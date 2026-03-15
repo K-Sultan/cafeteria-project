@@ -35,7 +35,7 @@ $profilePic = !empty($user['profile_pic']) ? '/public/uploads/' . $user['profile
           </svg>
         </button>
       </div>
-      <?php endif; ?>
+      <?php endif; ?> 
 
       <!-- Logo + Nav links -->
       <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
@@ -44,11 +44,10 @@ $profilePic = !empty($user['profile_pic']) ? '/public/uploads/' . $user['profile
         </div>
         <div class="hidden sm:ml-6 sm:block">
           <div class="flex space-x-4">
+            <a href="/" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">Home</a>
             <?php if ($role === 'user'): ?>
-              <a href="/" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">Home</a>
               <a href="/my-orders" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">My Orders</a>
             <?php elseif ($role === 'admin'): ?>
-              <a href="/" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">Home</a>
               <a href="/products" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">Products</a>
               <a href="/users" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">Users</a>
               <a href="/manual-order" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">Manual Order</a>
