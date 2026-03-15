@@ -1,6 +1,20 @@
-body{
-    width: 100vw;
+body {
+    margin: 0;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    
+    flex-direction: column;
     overflow-x: hidden;
+}
+
+/* Make the main content area grow so footer is pushed to the bottom */
+body > div {
+    flex: 1;
+}
+
+.site-footer {
+    margin-top: auto;
 }
 
 /* Custom Scrollbar for the cart */

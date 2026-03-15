@@ -1,6 +1,6 @@
 <?php View::renderComponent("header"); ?>
 
-<div class="bg-gray-900 min-h-95vh pt-4 relative">
+<div class="bg-gray-900 min-h-95vh pt-4 relative mb-10">
     <!-- Decorative background elements -->
     <div class="absolute top-0 inset-x-0 h-96 bg-gradient-to-b from-indigo-900/20 to-transparent pointer-events-none"></div>
     <div class="absolute -top-40 -right-40 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>

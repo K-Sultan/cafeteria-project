@@ -7,6 +7,10 @@ require_once __DIR__ . "/../models/User.php";
 class UserController {
     
     public function index() {
+        if (!User::isAdmin()) {
+            header("Location: /");
+            exit;
+        }
         $userModel = new User();
         $users = $userModel->getAllUsers();
         View::render("users", compact("users"));
