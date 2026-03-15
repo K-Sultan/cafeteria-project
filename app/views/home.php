@@ -152,7 +152,7 @@
             items: items
         };
 
-        try {
+        try { 
             this.disabled = true;
             this.innerText = "Processing...";
 

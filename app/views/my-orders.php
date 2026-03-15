@@ -35,7 +35,7 @@
                                     View
                                 </a>
 
-                                <?php if ($order['status'] === 'pending'): ?>
+                                <?php if ($order['status'] === 'processing'): ?>
                                     <form action="/orders/cancel" method="POST" class="inline">
                                         <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
                                         <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">

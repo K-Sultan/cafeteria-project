@@ -10,7 +10,7 @@ class Order {
             $conn->beginTransaction();
             
             // 1. Insert into orders table
-            $stmt = $conn->prepare("INSERT INTO orders (user_id, room_no, notes, status, total_amount) VALUES (?, ?, ?, 'pending', ?)");
+            $stmt = $conn->prepare("INSERT INTO orders (user_id, room_no, notes, status, total_amount) VALUES (?, ?, ?, 'processing', ?)");
             $stmt->execute([$userId, $roomNo, $notes, $totalAmount]);
             
             $orderId = $conn->lastInsertId();
@@ -117,7 +117,7 @@ class Order {
         $stmt = $conn->prepare("
             UPDATE orders
             SET status = 'cancelled'
-            WHERE id = ? AND user_id = ? AND status = 'pending'
+            WHERE id = ? AND user_id = ? AND status = 'processing'
         ");
     
         return $stmt->execute([$orderId, $userId]);
