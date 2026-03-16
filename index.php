@@ -22,7 +22,7 @@ $router->post("/forgotpassword", [AuthController::class, "forgotPassword"]);
 $router->get("/users/add", [UserController::class, "add"]);
 $router->post("/users", [UserController::class, "store"]);
 $router->get("/users", [UserController::class, "index"]);
-$router->get("/", [UserController::class, "home"]);
+//$router->get("/", [UserController::class, "home"]);
 //$router->get('/home', [ProductController::class, 'index']);
 
 $router->get("/",[(User::isAdmin())? OrderController::class : UserController::class, "home"]);
