@@ -22,6 +22,9 @@ $router->post("/forgotpassword", [AuthController::class, "forgotPassword"]);
 $router->get("/users/add", [UserController::class, "add"]);
 $router->post("/users", [UserController::class, "store"]);
 $router->get("/users", [UserController::class, "index"]);
+$router->get("/users/edit/:id", [UserController::class, "edit"]);
+$router->post("/users/update/:id", [UserController::class, "update"]);
+$router->get("/users/delete/:id", [UserController::class, "delete"]);
 $router->get("/", [UserController::class, "home"]);
 //$router->get('/home', [ProductController::class, 'index']);
 

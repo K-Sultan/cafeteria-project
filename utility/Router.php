@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 
 class Router
 {
@@ -7,8 +6,13 @@ class Router
 
     private function register($path, $method, $handler)
     {
-        $this->routes["$method"]["$path"] = [
-            'handler' => $handler
+        // Convert something like /users/edit/:id to a regex pattern: ^/users/edit/([^/]+)$
+        $regex = preg_replace('/:[a-zA-Z0-9_]+/', '([^/]+)', $path);
+        $regex = "@^" . $regex . "$@";
+
+        $this->routes[$method][$path] = [
+            'handler' => $handler,
+            'regex' => $regex
         ];
     }
 
@@ -16,12 +20,10 @@ class Router
     {
         $this->register($path, 'GET', $handler);
     }
-
     public function post($path, $handler)
     {
         $this->register($path, 'POST', $handler);
     }
-
     public function delete($path, $handler)
     {
         $this->register($path, 'DELETE', $handler);
@@ -31,7 +33,7 @@ class Router
     {
         $method = $_SERVER['REQUEST_METHOD'];
 
-        // Support HTML form method spoofing: POST + _method=DELETE/PUT/PATCH
+        // Method Spoofing
         if ($method === 'POST' && isset($_POST['_method'])) {
             $spoofedMethod = strtoupper(trim($_POST['_method']));
             if (in_array($spoofedMethod, ['PUT', 'PATCH', 'DELETE'], true)) {
@@ -40,35 +42,30 @@ class Router
         }
 
         $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-            // echo "Requested Path: $path <br>";
-  
+
+        // Remove project subfolder if exists (as per your original code)
         $path = str_replace("/cafeteria", "", $path);
-        if (isset($this->routes["$method"]["$path"])) {
 
-            $handler = $this->routes["$method"]["$path"];
-            
-               
-            $class = $handler['handler'][0];
-            $method = $handler['handler'][1];
-           
+        // Iterate through routes for the current method
+        if (isset($this->routes[$method])) {
+            foreach ($this->routes[$method] as $routePath => $route) {
+                if (preg_match($route['regex'], $path, $matches)) {
+                    // Remove the full match (index 0) to keep only the parameters
+                    array_shift($matches);
 
-            if(class_exists($class) && method_exists($class, $method)) {
-               
-             // [ClassName::class, 'methodName']
-               
-             $instance = new $class();
+                    $class = $route['handler'][0];
+                    $func = $route['handler'][1];
 
-               $instance->$method();
-
-            }else{
-                echo "Handler not found";
+                    if (class_exists($class) && method_exists($class, $func)) {
+                        $instance = new $class();
+                        // Call the method and pass captured parameters (like $id)
+                        return call_user_func_array([$instance, $func], $matches);
+                    }
+                }
             }
-            
-
-        }else{
-             echo "404 Not Found";
         }
-     
-       
+
+        http_response_code(404);
+        echo "404 Not Found";
     }
 }
