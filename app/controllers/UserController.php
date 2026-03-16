@@ -14,8 +14,29 @@ class UserController
             exit;
         }
         $userModel = new User();
-        $users = $userModel->getAllUsers();
-        View::render("users", compact("users"));
+        $allUsers = $userModel->getAllUsers();
+
+        $perPage = 10;
+        $currentPage = max(1, (int)($_GET['page'] ?? 1));
+        $totalItems = count($allUsers);
+        $totalPages = max(1, (int)ceil($totalItems / $perPage));
+
+        if ($currentPage > $totalPages) {
+            $currentPage = $totalPages;
+        }
+
+        $offset = ($currentPage - 1) * $perPage;
+        $users = array_slice($allUsers, $offset, $perPage);
+
+        View::render("users", [
+            "users" => $users,
+            "pagination" => [
+                "current_page" => $currentPage,
+                "per_page" => $perPage,
+                "total_items" => $totalItems,
+                "total_pages" => $totalPages
+            ]
+        ]);
     }
 
     public function add()

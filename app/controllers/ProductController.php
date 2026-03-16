@@ -6,9 +6,28 @@ class ProductController
 {
     public function index()
     {
-        $products = Product::getAll();
+        $allProducts = Product::getAll();
+
+        $perPage = 10;
+        $currentPage = max(1, (int)($_GET['page'] ?? 1));
+        $totalItems = count($allProducts);
+        $totalPages = max(1, (int)ceil($totalItems / $perPage));
+
+        if ($currentPage > $totalPages) {
+            $currentPage = $totalPages;
+        }
+
+        $offset = ($currentPage - 1) * $perPage;
+        $products = array_slice($allProducts, $offset, $perPage);
+
         View::render("products/index", [
-            "products" => $products
+            "products" => $products,
+            "pagination" => [
+                "current_page" => $currentPage,
+                "per_page" => $perPage,
+                "total_items" => $totalItems,
+                "total_pages" => $totalPages
+            ]
         ]);
     }
     public function home()

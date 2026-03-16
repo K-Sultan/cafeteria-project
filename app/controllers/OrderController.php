@@ -56,9 +56,29 @@ class OrderController
         }
 
         $userId = $_SESSION['userId'];
-        $orders = Order::getOrdersByUserId($userId);
+        $allOrders = Order::getOrdersByUserId($userId);
 
-        View::render("my-orders", ["orders" => $orders]);
+        $perPage = 10;
+        $currentPage = max(1, (int)($_GET['page'] ?? 1));
+        $totalItems = count($allOrders);
+        $totalPages = max(1, (int)ceil($totalItems / $perPage));
+
+        if ($currentPage > $totalPages) {
+            $currentPage = $totalPages;
+        }
+
+        $offset = ($currentPage - 1) * $perPage;
+        $orders = array_slice($allOrders, $offset, $perPage);
+
+        View::render("my-orders", [
+            "orders" => $orders,
+            "pagination" => [
+                "current_page" => $currentPage,
+                "per_page" => $perPage,
+                "total_items" => $totalItems,
+                "total_pages" => $totalPages
+            ]
+        ]);
     }
 
     public function show()
@@ -162,13 +182,31 @@ class OrderController
 
         $users = User::getAllUsers();
         $rooms = Order::getRoomsNumbers();
-        $orders = Order::getOrdersWithItems($filters);
+        $allOrders = Order::getOrdersWithItems($filters);
+
+        $perPage = 10;
+        $currentPage = max(1, (int)($_GET['page'] ?? 1));
+        $totalItems = count($allOrders);
+        $totalPages = max(1, (int)ceil($totalItems / $perPage));
+
+        if ($currentPage > $totalPages) {
+            $currentPage = $totalPages;
+        }
+
+        $offset = ($currentPage - 1) * $perPage;
+        $orders = array_slice($allOrders, $offset, $perPage);
 
         View::render("admin/home", [
             "users" => $users,
             "rooms" => $rooms,
             "orders" => $orders,
             "filters" => $filters,
+            "pagination" => [
+                "current_page" => $currentPage,
+                "per_page" => $perPage,
+                "total_items" => $totalItems,
+                "total_pages" => $totalPages
+            ]
         ]);
 
     }
@@ -185,7 +223,18 @@ class OrderController
         $endDate = $_GET['date_to'] ?? null;
         $userId = $_GET['user_id'] ?? null;
 
-        $checks = Order::getChecks($startDate, $endDate, $userId);
+        $allChecks = Order::getChecks($startDate, $endDate, $userId);
+        $perPage = 10;
+        $currentPage = max(1, (int)($_GET['page'] ?? 1));
+        $totalItems = count($allChecks);
+        $totalPages = max(1, (int)ceil($totalItems / $perPage));
+
+        if ($currentPage > $totalPages) {
+            $currentPage = $totalPages;
+        }
+
+        $offset = ($currentPage - 1) * $perPage;
+        $checks = array_slice($allChecks, $offset, $perPage, true);
         $users = User::getAllUsers();
 
         View::render("admin/checks", [
@@ -195,6 +244,12 @@ class OrderController
                 "date_from" => $startDate,
                 "date_to" => $endDate,
                 "user_id" => $userId
+            ],
+            "pagination" => [
+                "current_page" => $currentPage,
+                "per_page" => $perPage,
+                "total_items" => $totalItems,
+                "total_pages" => $totalPages
             ]
         ]);
     }
