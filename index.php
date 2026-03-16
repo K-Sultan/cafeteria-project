@@ -44,5 +44,6 @@ $router->post('/products', [ProductController::class, 'store']);
 $router->post('/products/update', [ProductController::class, 'update']);
 $router->post('/products/availability', [ProductController::class, 'updateAvailability']);
 $router->delete('/products/delete', [ProductController::class, 'destroy']);
+$router->post('/categories', [ProductController::class, 'storeCategory']);
 
 $router->resolve();
