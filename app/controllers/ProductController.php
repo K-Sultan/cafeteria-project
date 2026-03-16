@@ -183,30 +183,6 @@ class ProductController
         exit;
     }
 
-    public function storeCategory()
-    {
-        header('Content-Type: application/json');
-
-        $name = trim($_POST['name'] ?? '');
-        if ($name === '') {
-            echo json_encode(['success' => false, 'message' => 'Category name is required.']);
-            exit;
-        }
-
-        if (Product::categoryExists($name)) {
-            echo json_encode(['success' => false, 'message' => 'Category already exists.']);
-            exit;
-        }
-
-        $id = Product::addCategory($name);
-        if ($id) {
-            echo json_encode(['success' => true, 'category' => ['id' => $id, 'name' => $name]]);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Failed to add category.']);
-        }
-        exit;
-    }
-
     public function update()
     {
         $errors = [];

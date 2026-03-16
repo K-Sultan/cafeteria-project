@@ -6,6 +6,7 @@ require_once "app/controllers/UserController.php";
 require_once "app/controllers/AuthController.php";
 require_once "app/controllers/OrderController.php"; // Added this line
 require_once __DIR__ . "/app/controllers/ProductController.php";
+require_once __DIR__ . "/app/controllers/CategoryController.php";
 
 
 $router = new Router();
@@ -44,6 +45,8 @@ $router->post('/products', [ProductController::class, 'store']);
 $router->post('/products/update', [ProductController::class, 'update']);
 $router->post('/products/availability', [ProductController::class, 'updateAvailability']);
 $router->delete('/products/delete', [ProductController::class, 'destroy']);
-$router->post('/categories', [ProductController::class, 'storeCategory']);
+$router->get('/categories', [CategoryController::class, 'index']);
+$router->post('/categories', [CategoryController::class, 'store']);
+$router->delete('/categories/delete', [CategoryController::class, 'destroy']);
 
 $router->resolve();

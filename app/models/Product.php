@@ -33,6 +33,26 @@ class Product {
         return false;
     }
 
+    public static function findCategoryById($id) {
+        $conn = Database::getConnection();
+        $stmt = $conn->prepare("SELECT * FROM categories WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public static function categoryHasProducts($categoryId) {
+        $conn = Database::getConnection();
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM products WHERE category_id = ?");
+        $stmt->execute([$categoryId]);
+        return (int)$stmt->fetchColumn() > 0;
+    }
+
+    public static function deleteCategory($id) {
+        $conn = Database::getConnection();
+        $stmt = $conn->prepare("DELETE FROM categories WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+
 
     public static function getAll() {
         $conn = Database::getConnection();
