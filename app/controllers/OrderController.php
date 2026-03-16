@@ -111,7 +111,7 @@ class OrderController {
             exit;
         }
           
-        View::render("Admin/home");
+        View::render("admin/home");
     }
 }
 
