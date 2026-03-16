@@ -29,6 +29,13 @@
 </div>
 
 <script>
+    const APP_BASE_PATH = <?= json_encode(rtrim(dirname($_SERVER['SCRIPT_NAME']), '/')) ?>;
+
+    function appUrl(path) {
+        const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+        return `${APP_BASE_PATH}${normalizedPath}`;
+    }
+
     // Minimal Cart Logic for Demo
     let cart = {};
 
@@ -156,7 +163,7 @@
             this.disabled = true;
             this.innerText = "Processing...";
 
-            const response = await fetch('/orders', {
+            const response = await fetch(appUrl('/orders'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
