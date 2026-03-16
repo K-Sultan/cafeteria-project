@@ -38,7 +38,9 @@ $router->get("/checks", [OrderController::class, "checks"]);
 // $router->get('/home', [ProductController::class, 'home']);
 $router->get('/products', [ProductController::class, 'index']);
 $router->get('/products/create', [ProductController::class, 'create']);
+$router->get('/products/edit', [ProductController::class, 'edit']);
 $router->post('/products', [ProductController::class, 'store']);
+$router->post('/products/update', [ProductController::class, 'update']);
 $router->post('/products/availability', [ProductController::class, 'updateAvailability']);
 $router->delete('/products/delete', [ProductController::class, 'destroy']);
 

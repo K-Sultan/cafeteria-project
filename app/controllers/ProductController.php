@@ -28,6 +28,30 @@ class ProductController
             "categories" => $categories
         ]);
     }
+
+    public function edit()
+    {
+        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+
+        if (!$id) {
+            header("Location: /products");
+            exit;
+        }
+
+        $product = Product::findById($id);
+
+        if (!$product) {
+            header("Location: /products");
+            exit;
+        }
+
+        $categories = Product::getAllCategories();
+
+        View::render("products/edit", [
+            "product" => $product,
+            "categories" => $categories
+        ]);
+    }
     public function destroy()
     {
         $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
@@ -156,6 +180,134 @@ class ProductController
         ];
         $_SESSION['errors'] = $errors;
         header("Location: /products/create");
+        exit;
+    }
+
+    public function update()
+    {
+        $errors = [];
+
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+
+        if (!$id) {
+            header("Location: /products");
+            exit;
+        }
+
+        $product = Product::findById($id);
+
+        if (!$product) {
+            header("Location: /products");
+            exit;
+        }
+
+        $name = trim($_POST['name'] ?? '');
+        $price = trim($_POST['price'] ?? '');
+        $category_id = trim($_POST['category_id'] ?? '');
+        $is_available = isset($_POST['is_available']) ? 1 : 0;
+
+        if ($name === '') {
+            $errors[] = "Product name is required.";
+        } elseif (Product::nameExistsForOther($name, $id)) {
+            $errors[] = "This product name already exists.";
+        }
+
+        if ($price === '') {
+            $errors[] = "Price is required.";
+        } elseif (!is_numeric($price) || (float)$price <= 0) {
+            $errors[] = "Price must be a valid positive number.";
+        }
+
+        if ($category_id === '') {
+            $errors[] = "Category is required.";
+        } elseif (!ctype_digit($category_id)) {
+            $errors[] = "Category must be a valid numeric value.";
+        }
+
+        $imageName = $product['image'];
+        $newUploadedImage = null;
+
+        if (isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
+            if ($_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+                $errors[] = "There was an error uploading the image.";
+            } else {
+                $uploadDir = __DIR__ . "/../../public/uploads/";
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+
+                $fileExt = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+                $allowedExt = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
+                if (!in_array($fileExt, $allowedExt, true)) {
+                    $errors[] = "Invalid image format. Allowed: " . implode(', ', $allowedExt);
+                } else {
+                    $newUploadedImage = time() . "_" . uniqid() . "." . $fileExt;
+                    $targetFilePath = $uploadDir . $newUploadedImage;
+
+                    if (!move_uploaded_file($_FILES['image']['tmp_name'], $targetFilePath)) {
+                        $errors[] = "Failed to upload product image.";
+                        $newUploadedImage = null;
+                    }
+                }
+            }
+        }
+
+        if (!empty($errors)) {
+            // Prevent orphan file if a new image was uploaded but validation later failed.
+            if (!empty($newUploadedImage)) {
+                $uploadedImagePath = __DIR__ . "/../../public/uploads/" . $newUploadedImage;
+                if (is_file($uploadedImagePath)) {
+                    unlink($uploadedImagePath);
+                }
+            }
+
+            $_SESSION['product_edit_old'] = [
+                'name' => $name,
+                'price' => $price,
+                'category_id' => $category_id,
+                'is_available' => $is_available
+            ];
+            $_SESSION['product_edit_errors'] = $errors;
+            header("Location: /products/edit?id=" . $id);
+            exit;
+        }
+
+        if (!empty($newUploadedImage)) {
+            $imageName = $newUploadedImage;
+        }
+
+        $success = Product::update($id, $name, (float)$price, $imageName, (int)$category_id, $is_available);
+
+        if ($success) {
+            if (!empty($newUploadedImage) && !empty($product['image'])) {
+                $oldImagePath = __DIR__ . "/../../public/uploads/" . $product['image'];
+                if (is_file($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+            }
+
+            unset($_SESSION['product_edit_old'], $_SESSION['product_edit_errors']);
+            header("Location: /products");
+            exit;
+        }
+
+        if (!empty($newUploadedImage)) {
+            $uploadedImagePath = __DIR__ . "/../../public/uploads/" . $newUploadedImage;
+            if (is_file($uploadedImagePath)) {
+                unlink($uploadedImagePath);
+            }
+        }
+
+        $_SESSION['product_edit_old'] = [
+            'name' => $name,
+            'price' => $price,
+            'category_id' => $category_id,
+            'is_available' => $is_available
+        ];
+        $_SESSION['product_edit_errors'] = ["Something went wrong while updating the product."];
+
+        header("Location: /products/edit?id=" . $id);
         exit;
     }
 }

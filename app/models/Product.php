@@ -36,6 +36,13 @@ class Product {
         return $stmt->fetchColumn() > 0;
     }
 
+    public static function nameExistsForOther($name, $excludeId) {
+        $conn = Database::getConnection();
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM products WHERE LOWER(TRIM(name)) = LOWER(TRIM(?)) AND id <> ?");
+        $stmt->execute([$name, $excludeId]);
+        return $stmt->fetchColumn() > 0;
+    }
+
     public static function add($name, $price, $image_path, $category_id, $is_available) {
         $conn = Database::getConnection();
         $stmt = $conn->prepare("INSERT INTO products (name, price, image, category_id, is_available) VALUES (?, ?, ?, ?, ?)");
@@ -59,5 +66,11 @@ class Product {
         $conn = Database::getConnection();
         $stmt = $conn->prepare("UPDATE products SET is_available = ? WHERE id = ?");
         return $stmt->execute([$is_available, $id]);
+    }
+
+    public static function update($id, $name, $price, $image_path, $category_id, $is_available) {
+        $conn = Database::getConnection();
+        $stmt = $conn->prepare("UPDATE products SET name = ?, price = ?, image = ?, category_id = ?, is_available = ? WHERE id = ?");
+        return $stmt->execute([$name, $price, $image_path, $category_id, $is_available, $id]);
     }
 }
