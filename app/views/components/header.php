@@ -71,10 +71,7 @@ $profilePic = !empty($user['profile_pic']) ? '/public/uploads/' . $user['profile
             <span class="sr-only">Open user menu</span>
             <img src="<?= htmlspecialchars($profilePic) ?>" alt="Profile Picture" class="size-8 rounded-full bg-gray-800 ring-1 ring-white/10" />
           </button>
-          <div id="profile-menu" class="hidden absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 shadow-lg ring-1 ring-white/10">
-            <a href="/profile" class="block px-4 py-2 text-sm text-gray-300 hover:bg-white/5">Your profile</a>
-            <a href="/logout" class="block px-4 py-2 text-sm text-red-400 hover:bg-white/5">Sign out</a>
-          </div>
+          
         </div>
 
         <!-- Always-visible logout button -->

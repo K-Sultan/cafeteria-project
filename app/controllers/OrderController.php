@@ -164,13 +164,40 @@ class OrderController
         $rooms = Order::getRoomsNumbers();
         $orders = Order::getOrdersWithItems($filters);
 
-        View::render("Admin/home", [
+        View::render("admin/home", [
             "users" => $users,
             "rooms" => $rooms,
             "orders" => $orders,
             "filters" => $filters,
         ]);
 
-        View::render("admin/home");
+    }
+
+
+    public function checks()
+    {
+        if (!User::isAdmin()) {
+            header("Location: /");
+            exit;
+        }
+
+        $startDate = $_GET['date_from'] ?? null;
+        $endDate = $_GET['date_to'] ?? null;
+        $userId = $_GET['user_id'] ?? null;
+
+        $checks = Order::getChecks($startDate, $endDate, $userId);
+        $users = User::getAllUsers();
+
+        View::render("admin/checks", [
+            "checks" => $checks,
+            "users" => $users,
+            "filters" => [
+                "date_from" => $startDate,
+                "date_to" => $endDate,
+                "user_id" => $userId
+            ]
+        ]);
     }
 }
+
+
