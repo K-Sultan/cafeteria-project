@@ -67,8 +67,8 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 INSERT INTO `users` (`id`, `name`, `email`, `password_hash`, `room_no`, `extension`, `role`) VALUES 
-(1,'System Admin','admin@cafeteria.com','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','101','1001','admin'),
-(2,'John Doe','user@cafeteria.com','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi','202','2002','user');
+(1,'System Admin','admin@cafeteria.com','$2y$12$2.zoLW/TUP0.s0TTPlRnW.giz8SZLnp7JmiMtcKFUSCGyFXYX5UhO','101','1001','admin'),
+(2,'John Doe','user@cafeteria.com','$2y$12$2.zoLW/TUP0.s0TTPlRnW.giz8SZLnp7JmiMtcKFUSCGyFXYX5UhO','202','2002','user');
 UNLOCK TABLES;
 
 --

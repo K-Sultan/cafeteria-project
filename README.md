@@ -64,19 +64,20 @@ php -S localhost:8000
 
 Then, visit `http://localhost:8000` in your browser.
 
+---
+
+### 5. Default Login Credentials
+Once the database is imported, you can use the following accounts to test the system:
+
+| Role | Email (Copiable) | Password (Copiable) |
+| :--- | :--- | :--- |
+| **Admin** | `admin@cafeteria.com` | `12345678` |
+| **User** | `user@cafeteria.com` | `12345678` |
+
+---
 #### Using XAMPP/WAMP
 
 1. Move the project folder into your `htdocs` (XAMPP) or `www` (WAMP) directory.
 2. Start the **Apache** and **MySQL** services from the control panel.
 3. Visit `http://localhost/cafeteria-project` in your browser.
 
----
-### 5. Default Login Credentials
-Once the database is imported, you can use the following accounts to test the system:
-### 5. Default Login Credentials
-Once the database is imported, you can use the following accounts to test the system:
-
-| Role | Email (Copiable) | Password (Copiable) |
-| :--- | :--- | :--- |
-| **Admin** | `admin@cafeteria.com` | `admin123` |
-| **User** | `user@cafeteria.com` | `user123` |
