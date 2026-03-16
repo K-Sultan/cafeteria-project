@@ -15,6 +15,8 @@ $profilePic = !empty($user['profile_pic']) ? '/public/uploads/' . $user['profile
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cafeteria</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="//unpkg.com/alpinejs" defer></script>
+
     <link rel="stylesheet" href="/app/views/src/styles/style.css">
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
