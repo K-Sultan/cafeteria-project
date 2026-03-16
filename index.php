@@ -10,10 +10,6 @@ require_once __DIR__ . "/app/controllers/ProductController.php";
 
 $router = new Router();
 
-//TODO : the / should be handled depending on the authorization(user or admin)
-// $router->get("/", [UserController::class, "index"]);
-// $router->post("/user", [UserController::class, "home"]);
-
 
 $router->get("/login", [AuthController::class, "index"]);
 $router->post("/login", [AuthController::class, "login"]);
@@ -22,19 +18,31 @@ $router->post("/forgotpassword", [AuthController::class, "forgotPassword"]);
 $router->get("/users/add", [UserController::class, "add"]);
 $router->post("/users", [UserController::class, "store"]);
 $router->get("/users", [UserController::class, "index"]);
+$router->get("/users/edit/:id", [UserController::class, "edit"]);
+$router->post("/users/update/:id", [UserController::class, "update"]);
+$router->get("/users/delete/:id", [UserController::class, "delete"]);
 $router->get("/", [UserController::class, "home"]);
-//$router->get('/home', [ProductController::class, 'index']);
-$router->get("/", [UserController::class, "home"]);
+
+$router->get("/", [(User::isAdmin()) ? OrderController::class : UserController::class, "home"]);
+
 $router->get("/logout", [UserController::class, "logout"]);
 $router->post("/orders", [OrderController::class, "store"]); // Added this line
-
+$router->post("/orders/status", [OrderController::class, "updateStatus"]);
+// $router->get('/home', [ProductController::class, 'index']);
 $router->get("/my-orders", [OrderController::class, "index"]);
-//will show logged in users order
-
 $router->get("/orders/show", [OrderController::class, "show"]);
-//details page
-
 $router->post("/orders/cancel", [OrderController::class, "cancel"]);
-//cancel order
+$router->get("/manual-order", [UserController::class, "home"]);
+$router->get("/checks", [OrderController::class, "checks"]);
+
+
+// $router->get('/home', [ProductController::class, 'home']);
+$router->get('/products', [ProductController::class, 'index']);
+$router->get('/products/create', [ProductController::class, 'create']);
+$router->get('/products/edit', [ProductController::class, 'edit']);
+$router->post('/products', [ProductController::class, 'store']);
+$router->post('/products/update', [ProductController::class, 'update']);
+$router->post('/products/availability', [ProductController::class, 'updateAvailability']);
+$router->delete('/products/delete', [ProductController::class, 'destroy']);
 
 $router->resolve();

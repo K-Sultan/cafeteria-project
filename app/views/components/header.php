@@ -15,7 +15,10 @@ $profilePic = !empty($user['profile_pic']) ? '/public/uploads/' . $user['profile
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cafeteria</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="app/views/src/styles/style.css">
+    <script src="//unpkg.com/alpinejs" defer></script>
+
+    <link rel="stylesheet" href="/app/views/src/styles/style.css">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="h-full bg-gray-900  flex flex-col">
 
@@ -35,7 +38,7 @@ $profilePic = !empty($user['profile_pic']) ? '/public/uploads/' . $user['profile
           </svg>
         </button>
       </div>
-      <?php endif; ?>
+      <?php endif; ?> 
 
       <!-- Logo + Nav links -->
       <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
@@ -44,11 +47,10 @@ $profilePic = !empty($user['profile_pic']) ? '/public/uploads/' . $user['profile
         </div>
         <div class="hidden sm:ml-6 sm:block">
           <div class="flex space-x-4">
+            <a href="/" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">Home</a>
             <?php if ($role === 'user'): ?>
-              <a href="/" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">Home</a>
               <a href="/my-orders" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">My Orders</a>
             <?php elseif ($role === 'admin'): ?>
-              <a href="/" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">Home</a>
               <a href="/products" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">Products</a>
               <a href="/users" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">Users</a>
               <a href="/manual-order" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">Manual Order</a>
@@ -69,10 +71,7 @@ $profilePic = !empty($user['profile_pic']) ? '/public/uploads/' . $user['profile
             <span class="sr-only">Open user menu</span>
             <img src="<?= htmlspecialchars($profilePic) ?>" alt="Profile Picture" class="size-8 rounded-full bg-gray-800 ring-1 ring-white/10" />
           </button>
-          <div id="profile-menu" class="hidden absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 shadow-lg ring-1 ring-white/10">
-            <a href="/profile" class="block px-4 py-2 text-sm text-gray-300 hover:bg-white/5">Your profile</a>
-            <a href="/logout" class="block px-4 py-2 text-sm text-red-400 hover:bg-white/5">Sign out</a>
-          </div>
+          
         </div>
 
         <!-- Always-visible logout button -->
