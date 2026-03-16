@@ -3,9 +3,11 @@
 require_once __DIR__ . "/../models/Order.php";
 require_once __DIR__ . "/../models/User.php";
 
-class OrderController {
+class OrderController
+{
 
-    public function store() {
+    public function store()
+    {
         // Since we send JSON from the frontend
         $data = json_decode(file_get_contents('php://input'), true);
         if (!$data) {
@@ -14,7 +16,7 @@ class OrderController {
         }
 
         $userId = $_SESSION['userId'] ?? null;
-        
+
         if (!$userId) {
             echo json_encode(['success' => false, 'message' => 'Not authenticated']);
             return;
@@ -46,7 +48,8 @@ class OrderController {
         }
     }
     //k
-    public function index() {
+    public function index()
+    {
         if (!isset($_SESSION['userId'])) {
             header("Location: /login");
             exit;
@@ -58,7 +61,8 @@ class OrderController {
         View::render("my-orders", ["orders" => $orders]);
     }
 
-    public function show() {
+    public function show()
+    {
         if (!isset($_SESSION['userId'])) {
             header("Location: /login");
             exit;
@@ -85,7 +89,8 @@ class OrderController {
         ]);
     }
 
-    public function cancel() {
+    public function cancel()
+    {
         if (!isset($_SESSION['userId'])) {
             header("Location: /login");
             exit;
@@ -103,17 +108,39 @@ class OrderController {
         header("Location: /my-orders");
         exit;
     }
+    public function checks()
+    {
+        if (!User::isAdmin()) {
+            header("Location: /");
+            exit;
+        }
+
+        $startDate = $_GET['date_from'] ?? null;
+        $endDate = $_GET['date_to'] ?? null;
+        $userId = $_GET['user_id'] ?? null;
+
+        $checks = Order::getChecks($startDate, $endDate, $userId);
+        $users = User::getAllUsers();
+
+        View::render("admin/checks", [
+            "checks" => $checks,
+            "users" => $users,
+            "filters" => [
+                "date_from" => $startDate,
+                "date_to" => $endDate,
+                "user_id" => $userId
+            ]
+        ]);
+    }
 
 
-    public function home() {
+    public function home()
+    {
         if (!User::isAdmin()) {
             header("Location: /login");
             exit;
         }
-          
+
         View::render("admin/home");
     }
 }
-
-
-

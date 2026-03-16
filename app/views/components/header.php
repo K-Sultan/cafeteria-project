@@ -16,6 +16,7 @@ $profilePic = !empty($user['profile_pic']) ? '/public/uploads/' . $user['profile
     <title>Cafeteria</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="/app/views/src/styles/style.css">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="h-full bg-gray-900  flex flex-col">
 

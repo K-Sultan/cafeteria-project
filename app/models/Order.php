@@ -2,34 +2,35 @@
 
 require_once __DIR__ . "/../../utility/database.php";
 
-class Order {
-    public static function create($userId, $roomNo, $notes, $totalAmount, $items) {
+class Order
+{
+    public static function create($userId, $roomNo, $notes, $totalAmount, $items)
+    {
         $conn = Database::getConnection();
-        
+
         try {
             $conn->beginTransaction();
-            
+
             // 1. Insert into orders table
             $stmt = $conn->prepare("INSERT INTO orders (user_id, room_no, notes, status, total_amount) VALUES (?, ?, ?, 'processing', ?)");
             $stmt->execute([$userId, $roomNo, $notes, $totalAmount]);
-            
+
             $orderId = $conn->lastInsertId();
-            
+
             // 2. Insert into order_items table
             $stmtItems = $conn->prepare("INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?)");
-            
+
             foreach ($items as $item) {
                 $stmtItems->execute([
-                    $orderId, 
-                    $item['id'], 
-                    $item['quantity'], 
+                    $orderId,
+                    $item['id'],
+                    $item['quantity'],
                     $item['price']
                 ]);
             }
-            
+
             $conn->commit();
             return $orderId;
-            
         } catch (Exception $e) {
             $conn->rollBack();
             error_log("Order creation failed: " . $e->getMessage());
@@ -37,20 +38,21 @@ class Order {
         }
     }
 
-    public static function getLatestOrderForUser($userId) {
+    public static function getLatestOrderForUser($userId)
+    {
         $conn = Database::getConnection();
-        
+
         // Find the most recent order ID that wasn't cancelled
         $stmt = $conn->prepare("SELECT id FROM orders WHERE user_id = ? AND status != 'cancelled' ORDER BY created_at DESC LIMIT 1");
         $stmt->execute([$userId]);
         $order = $stmt->fetch(PDO::FETCH_ASSOC);
-        
+
         if (!$order) {
             return []; // No previous orders
         }
-        
+
         $orderId = $order['id'];
-        
+
         // Fetch the items for that order, joining with products to get details
         $stmtItems = $conn->prepare("
             SELECT p.id, p.name, p.price, p.image, oi.quantity 
@@ -59,42 +61,45 @@ class Order {
             WHERE oi.order_id = ?
         ");
         $stmtItems->execute([$orderId]);
-        
+
         return $stmtItems->fetchAll(PDO::FETCH_ASSOC);
     }
 
     //k
-    public static function getOrdersByUserId($userId) {
+    public static function getOrdersByUserId($userId)
+    {
         $conn = Database::getConnection();
-    
+
         $stmt = $conn->prepare("
             SELECT id, room_no, notes, status, total_amount, created_at
             FROM orders
             WHERE user_id = ?
             ORDER BY created_at DESC
         ");
-    
+
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function getOrderById($orderId) {
+    public static function getOrderById($orderId)
+    {
         $conn = Database::getConnection();
-    
+
         $stmt = $conn->prepare("
             SELECT id, user_id, room_no, notes, status, total_amount, created_at
             FROM orders
             WHERE id = ?
             LIMIT 1
         ");
-    
+
         $stmt->execute([$orderId]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public static function getOrderItems($orderId) {
+    public static function getOrderItems($orderId)
+    {
         $conn = Database::getConnection();
-    
+
         $stmt = $conn->prepare("
             SELECT 
                 p.name,
@@ -106,21 +111,71 @@ class Order {
             JOIN products p ON p.id = oi.product_id
             WHERE oi.order_id = ?
         ");
-    
+
         $stmt->execute([$orderId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function cancelOrder($orderId, $userId) {
+    public static function cancelOrder($orderId, $userId)
+    {
         $conn = Database::getConnection();
-    
+
         $stmt = $conn->prepare("
             UPDATE orders
             SET status = 'cancelled'
             WHERE id = ? AND user_id = ? AND status = 'processing'
         ");
-    
+
         return $stmt->execute([$orderId, $userId]);
     }
-    //k
+    public static function getChecks($startDate = null, $endDate = null, $userId = null)
+    {
+        $conn = Database::getConnection();
+
+        // Base query to get all orders with user names
+        $sql = "SELECT o.*, u.name as user_name 
+            FROM orders o 
+            JOIN users u ON o.user_id = u.id 
+            WHERE o.status != 'cancelled'";
+        $params = [];
+
+        if ($startDate) {
+            $sql .= " AND o.created_at >= ?";
+            $params[] = $startDate . " 00:00:00";
+        }
+        if ($endDate) {
+            $sql .= " AND o.created_at <= ?";
+            $params[] = $endDate . " 23:59:59";
+        }
+        if ($userId) {
+            $sql .= " AND o.user_id = ?";
+            $params[] = $userId;
+        }
+
+        $sql .= " ORDER BY o.created_at DESC";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($params);
+        $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Grouping logic for the nested accordions
+        $checks = [];
+        foreach ($orders as $order) {
+            $uId = $order['user_id'];
+            if (!isset($checks[$uId])) {
+                $checks[$uId] = [
+                    'user_name' => $order['user_name'],
+                    'total_amount' => 0,
+                    'orders' => []
+                ];
+            }
+
+            // Get items for this specific order
+            $order['items'] = self::getOrderItems($order['id']);
+
+            $checks[$uId]['total_amount'] += $order['total_amount'];
+            $checks[$uId]['orders'][] = $order;
+        }
+
+        return $checks;
+    }
 }

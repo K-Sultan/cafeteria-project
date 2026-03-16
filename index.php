@@ -10,10 +10,6 @@ require_once __DIR__ . "/app/controllers/ProductController.php";
 
 $router = new Router();
 
-//TODO : the / should be handled depending on the authorization(user or admin)
-// $router->get("/", [UserController::class, "index"]);
-// $router->post("/user", [UserController::class, "home"]);
-
 
 $router->get("/login", [AuthController::class, "index"]);
 $router->post("/login", [AuthController::class, "login"]);
@@ -26,9 +22,8 @@ $router->get("/users/edit/:id", [UserController::class, "edit"]);
 $router->post("/users/update/:id", [UserController::class, "update"]);
 $router->get("/users/delete/:id", [UserController::class, "delete"]);
 $router->get("/", [UserController::class, "home"]);
-//$router->get('/home', [ProductController::class, 'index']);
 
-$router->get("/",[(User::isAdmin())? OrderController::class : UserController::class, "home"]);
+$router->get("/", [(User::isAdmin()) ? OrderController::class : UserController::class, "home"]);
 
 $router->get("/logout", [UserController::class, "logout"]);
 $router->post("/orders", [OrderController::class, "store"]); // Added this line
@@ -37,6 +32,7 @@ $router->get("/my-orders", [OrderController::class, "index"]);
 $router->get("/orders/show", [OrderController::class, "show"]);
 $router->post("/orders/cancel", [OrderController::class, "cancel"]);
 $router->get("/manual-order", [UserController::class, "home"]);
+$router->get("/checks", [OrderController::class, "checks"]);
 
 
 // $router->get('/home', [ProductController::class, 'home']);
