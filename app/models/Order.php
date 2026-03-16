@@ -10,7 +10,7 @@ class Order {
             $conn->beginTransaction();
             
             // 1. Insert into orders table
-            $stmt = $conn->prepare("INSERT INTO orders (user_id, room_no, notes, status, total_amount) VALUES (?, ?, ?, 'processing', ?)");
+            $stmt = $conn->prepare("INSERT INTO orders (user_id, room_no, notes, status, total_amount) VALUES (?, ?, ?, 'pending', ?)");
             $stmt->execute([$userId, $roomNo, $notes, $totalAmount]);
             
             $orderId = $conn->lastInsertId();
@@ -40,18 +40,16 @@ class Order {
     public static function getLatestOrderForUser($userId) {
         $conn = Database::getConnection();
         
-        // Find the most recent order ID that wasn't cancelled
         $stmt = $conn->prepare("SELECT id FROM orders WHERE user_id = ? AND status != 'cancelled' ORDER BY created_at DESC LIMIT 1");
         $stmt->execute([$userId]);
         $order = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if (!$order) {
-            return []; // No previous orders
+            return [];
         }
         
         $orderId = $order['id'];
         
-        // Fetch the items for that order, joining with products to get details
         $stmtItems = $conn->prepare("
             SELECT p.id, p.name, p.price, p.image, oi.quantity 
             FROM order_items oi
@@ -63,7 +61,6 @@ class Order {
         return $stmtItems->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    //k
     public static function getOrdersByUserId($userId) {
         $conn = Database::getConnection();
     
@@ -117,10 +114,9 @@ class Order {
         $stmt = $conn->prepare("
             UPDATE orders
             SET status = 'cancelled'
-            WHERE id = ? AND user_id = ? AND status = 'processing'
+            WHERE id = ? AND user_id = ? AND status = 'pending'
         ");
     
         return $stmt->execute([$orderId, $userId]);
     }
-    //k
 }
