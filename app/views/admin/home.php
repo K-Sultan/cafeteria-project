@@ -53,13 +53,11 @@
                                     EGP <?= htmlspecialchars(number_format((float) $order['total_amount'], 2)) ?>
                                 </td>
                                 <td class="px-4 py-3">
-                                    <div class="flex items-center gap-3" @click.stop>
+                                    <div class="flex items-center gap-3">
                                         <select
                                             class="bg-slate-900 border border-slate-700 px-3 py-2 rounded-lg text-sm"
                                             data-order-id="<?= (int) $order['id'] ?>"
                                             data-current-status="<?= htmlspecialchars($order['status']) ?>"
-                                            @click.stop
-                                            @change.stop="updateOrderStatus($event.target)"
                                         >
                                             <option value="processing" <?= $order['status'] === 'processing' ? 'selected' : '' ?>>Processing</option>
                                             <option value="out_for_delivery" <?= $order['status'] === 'out_for_delivery' ? 'selected' : '' ?>>Out For Delivery</option>
@@ -150,6 +148,13 @@
 
 
 <script>
+    const APP_BASE_PATH = <?= json_encode(rtrim(dirname($_SERVER['SCRIPT_NAME']), '/')) ?>;
+
+    function appUrl(path) {
+        const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+        return `${APP_BASE_PATH}${normalizedPath}`;
+    }
+
     function toggleOrderDetails(orderId) {
         const detailsRow = document.getElementById(`order-details-${orderId}`);
         if (!detailsRow) {
@@ -180,7 +185,7 @@
         selectEl.disabled = true;
 
         try {
-            const response = await fetch('/orders/status', {
+            const response = await fetch(appUrl('/orders/status'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -209,6 +214,13 @@
             selectEl.disabled = false;
         }
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const statusSelects = document.querySelectorAll('select[data-order-id]');
+        statusSelects.forEach((selectEl) => {
+            selectEl.addEventListener('change', () => updateOrderStatus(selectEl));
+        });
+    });
 </script>
 
 <?php View::renderComponent("footer"); ?>
