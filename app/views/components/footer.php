@@ -22,6 +22,6 @@
     </footer>
 
 
-<script src="app/views/src/scripts/script.js"></script>
+<script src="/app/views/src/scripts/script.js"></script>
 </body>
 </html>
